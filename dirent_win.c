@@ -168,8 +168,11 @@ struct dirent * readdir_wildcard ( DIR * dir, char *wildcard)
 {
   static WIN32_FIND_DATA fData;
   char search[1024];
-  memset(search, 0, 1024);
-  strncpy(search, dir->szDirName, strlen(dir->szDirName) - 1);
+  memset(search, 0, sizeof(search));
+  size_t dir_name_len = strlen(dir->szDirName);
+  if (dir_name_len > 0) {
+      _snprintf(search, sizeof(search) - 1, "%.*s", (int)(dir_name_len - 1), dir->szDirName);
+  }
   strcat(search, wildcard);
 
 
